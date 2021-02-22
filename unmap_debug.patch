@@ -1,0 +1,35 @@
+commit a26464560a5a98a79eab0bcd813eb6d6dc0f420c
+Author: Victor Leschuk <vleschuk@gmail.com>
+Date:   Thu Jan 21 20:56:10 2021 +0300
+
+    More debug logs
+
+diff --git a/os_dep.c b/os_dep.c
+index cc310d7..26863b4 100644
+--- a/os_dep.c
++++ b/os_dep.c
+@@ -2579,6 +2579,9 @@ GC_INNER void GC_unmap(ptr_t start, size_t bytes)
+     ptr_t end_addr = GC_unmap_end(start, bytes);
+     word len = end_addr - start_addr;
+ 
++    GC_VERBOSE_LOG_PRINTF("start: %p\tstart_addr: %p\tend_addr: %p\tlen: %llu\n",
++        (void *)start, (void *)start_addr, (void *)end_addr, len);
++
+     if (0 == start_addr) return;
+ #   ifdef USE_WINALLOC
+       while (len != 0) {
+@@ -2615,9 +2618,13 @@ GC_INNER void GC_unmap(ptr_t start, size_t bytes)
+           void * result = mmap(start_addr, len, PROT_NONE,
+                                MAP_PRIVATE | MAP_FIXED | OPT_MAP_ANON,
+                                zero_fd, 0/* offset */);
++          GC_VERBOSE_LOG_PRINTF("result: %p\tstart_addr: %p\tzero_fd: %d\n",
++              result, (void *)start_addr, zero_fd);
+ 
+-          if (result != (void *)start_addr)
++          if (result != (void *)start_addr) {
++            GC_VERBOSE_LOG_PRINTF("errno: %d %s\n", errno, strerror(errno));
+             ABORT("mmap(PROT_NONE) failed");
++          }
+ #         if defined(CPPCHECK) || defined(LINT2)
+             /* Explicitly store the resource handle to a global variable. */
+             GC_noop1((word)result);
