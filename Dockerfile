@@ -35,7 +35,7 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 379CE192D4
 RUN echo "deb https://dl.bintray.com/crystal/deb all stable" | tee /etc/apt/sources.list.d/crystal.list
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-  crystal=0.35.\* make libyaml-dev libxml2-dev libgmp-dev libz-dev libssl-dev \
+  crystal=0.36.\* make libyaml-dev libxml2-dev libgmp-dev libz-dev libssl-dev \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
