@@ -1,0 +1,32 @@
+# Give the workflow a name. 
+name: docker-crystal weekly build image
+
+# Trigger Workflow every midnight UTC
+
+on:
+  schedule:
+    - cron: '0 0 * * 6'  
+
+  push:
+    branches:
+      - 20.04
+
+jobs:
+  build:
+    name: Scheduling
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set env
+        run: echo "GIT_TAG=`echo $(git describe --tags --abbrev=0)`" >> $GITHUB_ENV
+      - name: Get git tag
+        run: |
+          echo $GIT_TAG
+      - name: Build Docker image
+        run: docker build . --file Dockerfile --tag $GIT_TAG --tag neuralegion/crystal --tag neuralegion/crystal:$GIT_TAG
+      - name: Login into Docker
+        run: docker login --username=anatol1988 --password=${{ secrets.DOCKER_TOKEN }}
+      - name: Push Docker image
+        run: docker push neuralegion/crystal:$GIT_TAG
+      - name: Push Docker image
+        run: docker push neuralegion/crystal
