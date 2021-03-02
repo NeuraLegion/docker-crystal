@@ -13,20 +13,23 @@ on:
 
 jobs:
   build:
-    name: Scheduling
+    name: Building
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v1
+      - uses: nelonoel/branch-name@v1.0.1
       - name: Set env
         run: echo "GIT_TAG=`echo $(git describe --tags --abbrev=0)`" >> $GITHUB_ENV
       - name: Get git tag
         run: |
           echo $GIT_TAG
       - name: Build Docker image
-        run: docker build . --file Dockerfile --tag $GIT_TAG --tag neuralegion/crystal --tag neuralegion/crystal:$GIT_TAG
+        run: |
+          docker build --tag neuralegion/crystal:$BRANCH_NAME-$GIT_TAG  \
+            --tag neuralegion/crystal:$BRANCH_NAME                      \
+            --tag neuralegion/crystal:latest                            \
+            --tag neuralegion/crystal:$GIT_TAG .
       - name: Login into Docker
         run: docker login --username=anatol1988 --password=${{ secrets.DOCKER_TOKEN }}
       - name: Push Docker image
-        run: docker push neuralegion/crystal:$GIT_TAG
-      - name: Push Docker image
-        run: docker push neuralegion/crystal
+        run: docker image push --all-tags neuralegion/crystal
