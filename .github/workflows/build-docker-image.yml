@@ -10,6 +10,7 @@ on:
   push:
     branches:
       - 20.04-0.36
+      - 20.04-1.0
 
 jobs:
   build:
@@ -21,7 +22,8 @@ jobs:
       - name: Build Docker image
         run: |
           docker build --tag neuralegion/crystal:$BRANCH_NAME \
-            --tag neuralegion/crystal:0.36 .
+            --tag neuralegion/crystal:1.0 \
+            --tag neuralegion/crystal:latest .
       - name: Login into Docker
         run: docker login --username=anatol1988 --password=${{ secrets.DOCKER_TOKEN }}
       - name: Push Docker image
