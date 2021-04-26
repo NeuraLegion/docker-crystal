@@ -31,14 +31,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 379CE192D401AB61
-RUN echo "deb https://dl.bintray.com/crystal/deb all stable" | tee /etc/apt/sources.list.d/crystal.list
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-  crystal=0.36.\* make libyaml-dev libxml2-dev libgmp-dev libz-dev libssl-dev \
+  make libyaml-dev libxml2-dev gcc pkg-config libpcre3-dev libgmp-dev libz-dev libevent-dev wget libssl-dev \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
+# Install Crystal from it's source
+RUN wget -O crystal.deb https://github.com/crystal-lang/crystal/releases/download/0.36.1/crystal_0.36.1-1_amd64.deb && \
+  dpkg -i crystal.deb
+
 RUN rm /usr/lib/crystal/lib/libgc.a
 COPY --from=gc_builder /opt/gc/bdwgc/.libs/libgc.a /usr/lib/crystal/lib/libgc.a
-
